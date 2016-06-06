@@ -1,0 +1,64 @@
+version: '2'
+services:
+  data: # Holds certificates and other data that needs to stay the same between rebuilds
+    image: carolynvs/whaleinabox-data
+    container_name: data
+    volumes:
+      - /etc/certs
+      - /etc/letsencrypt
+      - /etc/jupyterhub
+    environment:
+      - "constraint:node==*-n1"
+  letsencrypt: # Handles generating and reissuing Let's Encrypt certificates
+    image: carolynvs/whaleinabox-letsencrypt
+    container_name: letsencrypt
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    volumes_from:
+      - data
+    environment:
+      - "constraint:node==*-n1"
+      - DOCKER_VERSION
+      - DOMAIN=$JUPYTERHUB_DOMAIN
+      - EMAIL=$LETSENCRYPT_EMAIL
+      - USE_PRODUCTION=$LETSENCRYPT_USE_PRODUCTION
+  jupyterhub:
+    image: carolynvs/whaleinabox-jupyterhub
+    container_name: jupyterhub
+    ports:
+      # TODO: Route this through nginx
+      - '8081:8081'
+    restart: always
+    volumes_from:
+      - data
+    environment:
+      - "constraint:node==*-n1"
+      - JUPYTERHUB_ADMINS
+      - JUPYTER_IMAGE
+      - DOMAIN=$JUPYTERHUB_DOMAIN
+      - BASE_URL=/jupyter
+      - OAUTH_CLIENT_ID=$CARINA_OAUTH_CLIENT_ID
+      - OAUTH_CLIENT_SECRET=$CARINA_OAUTH_CLIENT_SECRET
+  web: # The landing page for the website
+    build:
+      context: .
+      dockerfile: Dockerfile-web
+      args:
+        - "constraint:node==*-n1"
+    image: whaleinabox-web
+    container_name: web
+    environment:
+      - "constraint:node==*-n1"
+  nginx: # Directs traffic to the website, letsencrypt, jupyterhub and user servers
+    image: carolynvs/whaleinabox-nginx
+    container_name: nginx
+    ports:
+      - '80:80'
+      - '443:443'
+    restart: always
+    volumes_from:
+      - data
+      - web
+    environment:
+      - "constraint:node==*-n1"
+      - DOMAIN=$JUPYTERHUB_DOMAIN
