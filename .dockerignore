@@ -1,0 +1,9 @@
+bin/
+secrets.sh
+secrets.ps1
+setup.sh
+setup.ps1
+run.sh
+run.ps1
+LICENSE
+README.md

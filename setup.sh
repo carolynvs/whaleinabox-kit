@@ -66,8 +66,6 @@ dvm use &> /dev/null
 docker login
 
 # Print out the IP address of the cluster
-# TODO: Since we have their api key already, check if they have a Rackspace DNS entry for this domain
-# If so, prompt to add/update the A record on their behalf, and then wait for the DNS change to propogate
 printf "\n##########\n"
 echo "All done!"
 echo "If you are running JupyterHub with a domain name, add an A record to your DNS now pointing to the IP address below:"
