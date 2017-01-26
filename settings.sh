@@ -1,6 +1,22 @@
 #!/bin/bash
 
 #
+# Carina
+#
+
+# The Carina template to use for your cluster.
+export CLUSTER_TEMPLATE="Swarm 1.11.2 on LXC"
+
+# The carina cluster name where jupyterhub should be deployed. Do not use jupyterhub, or else you will cross the streams!
+# Used in setup.sh
+export JUPYTERHUB_CLUSTER=whale-in-a-box
+
+# If you don't want to store your credentials in secrets.sh
+# You can set your profile instead.
+export CARINA_PROFILE=
+
+
+#
 # JupyterHub
 #
 
@@ -30,10 +46,6 @@ export LETSENCRYPT_EMAIL=
 #
 # Random - These are all optional settings with which you can customize your Whale in a Box
 #
-
-# The carina cluster name where jupyterhub should be deployed. Do not use jupyterhub, or else you will cross the streams!
-# Used in setup.sh
-export JUPYTERHUB_CLUSTER=whale-in-a-box
 
 # Specifies if production/trusted or staging/untrusted certificate should be generated.
 # Staging certs don't count against your rate limit and should be used when first testing this out.

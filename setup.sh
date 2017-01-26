@@ -1,5 +1,5 @@
 #!/bin/bash
-set -euo pipefail
+set -eo pipefail
 
 # Figure out the current directory
 __SCRIPT_SOURCE="$_"
@@ -55,7 +55,7 @@ fi
 # Create a cluster on Carina
 if ! carina get $JUPYTERHUB_CLUSTER 2>&1 | grep -q $JUPYTERHUB_CLUSTER &> /dev/null; then
   echo "Creating a Carina cluster..."
-  carina create --wait $JUPYTERHUB_CLUSTER
+  carina create --template "$CLUSTER_TEMPLATE" $JUPYTERHUB_CLUSTER --wait
 fi
 eval $(carina env $JUPYTERHUB_CLUSTER)
 
@@ -70,4 +70,4 @@ printf "\n##########\n"
 echo "All done!"
 echo "If you are running JupyterHub with a domain name, add an A record to your DNS now pointing to the IP address below:"
 printf "##########\n"
-docker run --rm --net=host -e constraint:node==*-n1 racknet/ip public ipv4
+docker run --rm --net=host racknet/ip public ipv4
